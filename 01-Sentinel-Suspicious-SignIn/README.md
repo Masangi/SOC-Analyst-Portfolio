@@ -54,4 +54,27 @@ Document Findings
 
 ## Disclaimer
 
-This project uses fictional and sanitized data created for cybersecurity training and portfolio demonstration purposes. No employer, customer, or production data is included.
+## Project Files
+
+- [Investigation Queries](investigation-queries.kql) – KQL queries used to investigate authentication activity, suspicious IPs, Conditional Access, and affected users.
+- [Incident Findings](incident-findings.md) – Investigation timeline, findings, MITRE ATT&CK mapping, containment recommendations, and analyst verdict.
+
+## Key Investigation Result
+
+The investigation identified repeated authentication failures followed by a successful sign-in from an unusual source.
+
+Rather than immediately classifying the account as compromised, additional context was evaluated including:
+
+- Authentication history
+- Source IP activity
+- MFA requirements
+- Conditional Access results
+- Other identities targeted by the source
+- Post-authentication activity
+
+**Final Classification:** Suspicious – Potential Account Compromise  
+**Action:** Escalation and additional containment/validation recommended.
+
+## SOC Skills Demonstrated
+
+`Microsoft Sentinel` `KQL` `Entra ID` `Conditional Access` `Incident Response` `MITRE ATT&CK` `Identity Investigation` `Incident Scoping`
