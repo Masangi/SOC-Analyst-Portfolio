@@ -1,0 +1,82 @@
+// ============================================================
+// Microsoft Sentinel - Suspicious Sign-In Investigation
+// Portfolio Lab - Fictional/Sanitized Scenario
+// ============================================================
+
+
+// 1. Review authentication activity for the investigated user
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where UserPrincipalName == "alex.johnson@contoso.com"
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    IPAddress,
+    Location,
+    AppDisplayName,
+    ResultType,
+    ResultDescription
+| order by TimeGenerated desc
+
+
+// 2. Identify failed sign-in attempts
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where UserPrincipalName == "alex.johnson@contoso.com"
+| where ResultType != "0"
+| summarize
+    FailedAttempts=count()
+    by IPAddress, Location
+| order by FailedAttempts desc
+
+
+// 3. Look for successful authentication
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where UserPrincipalName == "alex.johnson@contoso.com"
+| where ResultType == "0"
+| project
+    TimeGenerated,
+    IPAddress,
+    Location,
+    AppDisplayName,
+    ConditionalAccessStatus,
+    AuthenticationRequirement
+
+
+// 4. Check activity originating from the suspicious IP
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where IPAddress == "203.0.113.50"
+| summarize
+    Attempts=count(),
+    Users=dcount(UserPrincipalName)
+    by UserPrincipalName, ResultType
+
+
+// 5. Review Conditional Access results
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where UserPrincipalName == "alex.johnson@contoso.com"
+| project
+    TimeGenerated,
+    IPAddress,
+    ConditionalAccessStatus,
+    AuthenticationRequirement,
+    AuthenticationDetails
+
+
+// 6. Identify other accounts targeted by the same IP
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where IPAddress == "203.0.113.50"
+| summarize
+    Attempts=count()
+    by UserPrincipalName
+| order by Attempts desc
